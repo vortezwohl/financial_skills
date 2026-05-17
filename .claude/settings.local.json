@@ -1,0 +1,36 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Recurse -Depth 2 -Force \"d:/Projects/PythonProjects/financial_skills\")",
+      "Bash(Select-Object FullName, Length, LastWriteTime)",
+      "Bash(Format-Table -AutoSize)",
+      "Bash(git ls-tree *)",
+      "WebFetch(domain:www.doubao.com)",
+      "Bash(curl -sL -H \"User-Agent: Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/131.0.0.0 Safari/537.36\" \"https://www.doubao.com/thread/w9af6c43c483b5f82\")",
+      "WebSearch",
+      "Bash(curl -sL -H \"User-Agent: Googlebot/2.1 \\(+http://www.google.com/bot.html\\)\" \"https://www.doubao.com/thread/w9af6c43c483b5f82\")",
+      "Bash(curl -sL -H \"User-Agent: Mozilla/5.0\" -H \"Accept: application/json\" \"https://www.doubao.com/api/thread/w9af6c43c483b5f82\")",
+      "Bash(curl -sL -H \"User-Agent: Mozilla/5.0\" -H \"Accept: application/json\" \"https://www.doubao.com/api/share/chat/w9af6c43c483b5f82\")",
+      "Bash(curl -sL -H \"User-Agent: Mozilla/5.0 \\(Linux; Android 14\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/131.0.0.0 Mobile Safari/537.36\" \"https://www.doubao.com/thread/w9af6c43c483b5f82\")",
+      "Read(//tmp/**)",
+      "Bash(ls -la /tmp/doubao_full.html 2>&1 && cp /tmp/doubao_full.html /mnt/d/Projects/PythonProjects/financial_skills/doubao_thread.html)",
+      "Bash(cp /tmp/doubao_full.html \"/mnt/d/Projects/PythonProjects/financial_skills/doubao_thread.html\" 2>&1)",
+      "Bash(ls -la /mnt/d/Projects/PythonProjects/ 2>&1)",
+      "Read(//mnt/d/Projects/**)",
+      "Bash(ls -la \"D:/Projects/PythonProjects/\" 2>&1)",
+      "Read(//d/Projects/PythonProjects/**)",
+      "Bash(grep -o '.{0,200}自动交易武器库.{0,200}' \"D:/Projects/PythonProjects/financial_skills/doubao_thread.html\")",
+      "Bash(curl -sL -H \"User-Agent: Mozilla/5.0 \\(Linux; Android 14\\) AppleWebKit/537.36\" -H \"Accept: application/json, text/plain, */*\" -H \"Referer: https://www.doubao.com/thread/w9af6c43c483b5f82\" \"https://www.doubao.com/api/thread/share/w9af6c43c483b5f82\")",
+      "Bash(curl -sL -H \"User-Agent: Mozilla/5.0\" -H \"Accept: application/json\" -H \"Referer: https://www.doubao.com/thread/w9af6c43c483b5f82\" \"https://www.doubao.com/thread_api/w9af6c43c483b5f82\")",
+      "Bash(curl -sL -H \"User-Agent: Mozilla/5.0\" -H \"Accept: application/json\" -H \"Referer: https://www.doubao.com/\" \"https://www.doubao.com/api/share/thread/detail?thread_id=w9af6c43c483b5f82\")",
+      "Bash(curl -sL -H \"User-Agent: Mozilla/5.0\" -H \"Accept: application/json\" -H \"Referer: https://www.doubao.com/thread/w9af6c43c483b5f82\" \"https://www.doubao.com/api/thread/detail?share_token=w9af6c43c483b5f82\")",
+      "Bash(curl -sL -H \"User-Agent: Mozilla/5.0\" -H \"Accept: application/json\" -H \"Referer: https://www.doubao.com/\" \"https://www.doubao.com/api/v1/thread/share_detail?thread_id=w9af6c43c483b5f82\")",
+      "Bash(curl -sL \"https://www.doubao.com/static/js/async/thread_\\(token\\)/page.1786ec4b.js\" -H \"User-Agent: Mozilla/5.0\" -H \"Referer: https://www.doubao.com/thread/w9af6c43c483b5f82\")",
+      "Bash(curl -sL \"https://www.doubao.com/static/js/async/thread_page.6c2fae21.js\" -H \"User-Agent: Mozilla/5.0\")"
+    ],
+    "additionalDirectories": [
+      "\\tmp",
+      "\\mnt\\d\\Projects\\PythonProjects\\financial_skills"
+    ]
+  }
+}
