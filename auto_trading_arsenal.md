@@ -1,6 +1,6 @@
-# 自动交易武器库 — 56个金融量化工具深度调研报告
+# 自动交易武器库 — MCP + Skills 全栈调研报告
 
-> 基于 2024-2025 年 GitHub/MCP 生态的最新资源，为每个工具补充了仓库地址、文档链接、MCP支持状态、关键特性与适用场景。
+> 覆盖 56 个 MCP/API/SDK 工具 + 12 个 Claude Code 开箱即用 Skills，含仓库地址、安装命令、调用方式、MCP支持状态与适用场景。
 > 调研时间：2026-05
 
 ---
@@ -15,6 +15,7 @@
 - [六、投研与分析工具（7个）](#六投研与分析工具7个)
 - [七、短线交易与高频工具（5个）](#七短线交易与高频工具5个)
 - [八、风投与另类投资工具（5个）](#八风投与另类投资工具5个)
+- [九、Claude Code Skills 开箱即用（12个）](#九claude-code-skills-开箱即用12个)
 - [快速集成建议](#快速集成建议)
 
 ---
@@ -607,68 +608,275 @@
 
 ---
 
+## 九、Claude Code Skills 开箱即用（12个）
+
+> **什么是 Skill？** Claude Code 的原生扩展机制。一个 Skill 就是一个带 YAML frontmatter 的 Markdown 文件（`SKILL.md`），放入 `.claude/skills/` 目录即可通过 `/` 斜杠命令调用。Skills 比 MCP 更进一步：**无需启动外部服务，直接在 Claude Code 对话中运行**，支持子代理并发、自动触发、模型覆盖等高级特性。
+
+### Skills vs MCP：选型速查
+
+| 维度 | MCP Server | Claude Code Skill |
+|------|-----------|-------------------|
+| **安装方式** | 启动外部进程（Python/Node/Docker） | 复制 `.md` 文件到 `.claude/skills/` |
+| **调用方式** | AI 自动选择 MCP 工具 | `/command` 斜杠命令 或 AI 自动触发 |
+| **运行环境** | 独立进程，需持续运行 | Claude Code 内置，零额外资源 |
+| **适用场景** | 实时数据推送、交易执行、WebSocket | 分析工作流、多智能体协作、报告生成 |
+| **并发能力** | 取决于服务端实现 | 原生支持子代理并行 |
+| **离线可用** | ❌ 依赖外部服务 | ✅ 纯工作流编排可离线 |
+
+### 安装方式速查
+
+```bash
+# 方式一：Claude Code 插件市场（推荐）
+/plugin marketplace add <owner>/<repo>
+/plugin install <plugin-name>
+
+# 方式二：手动安装 Skills
+git clone <repo>
+cp -r <repo>/.claude/skills/* .claude/skills/
+# 或
+cp <repo>/*.skill.md .claude/skills/<name>/SKILL.md
+
+# 方式三：npx 社区工具
+npx skills add <owner>/<repo>
+
+# 验证安装
+/help  # 查看所有可用命令
+```
+
+---
+
+### 57. TradingAgents — 多智能体交易团队
+
+| 维度 | 详情 |
+|------|------|
+| **GitHub** | [gonewx/TradingAgents](https://github.com/gonewx/TradingAgents) |
+| **安装** | `git clone` → 复制 `.claude/skills/` 目录 |
+| **调用方式** | `/trade-analyze AAPL`, `/market-scan 半导体`, `/portfolio-review`, `/risk-assessment NVDA`, `/backtest 双均线策略`, `/memory-train` |
+| **子代理数** | 13个（market-analyst, fundamentals-analyst, news-analyst, social-analyst, bull/bear-researcher, trader, risk-manager, portfolio-manager, 3个风险偏好分析师） |
+| **数据源** | yfinance（免费无限）, Alpha Vantage（500次/天）, Google News, Reddit sentiment |
+| **特色** | SQLite记忆系统（越用越准）；多空辩论机制（Bull vs Bear → 最终决策）；支持 A/港/美股 |
+| **安全边界** | ⚠️ 仅用于技术研究，禁止实际投资用途 |
+
+### 58. Claude Equity Research — 机构级个股研报
+
+| 维度 | 详情 |
+|------|------|
+| **GitHub** | [quant-sentiment-ai/claude-equity-research](https://github.com/quant-sentiment-ai/claude-equity-research) |
+| **安装** | `/plugin marketplace add quant-sentiment-ai/claude-equity-research` → `/plugin install` |
+| **调用方式** | `/trading-ideas AAPL` 或 `/trading-ideas NVDA --detailed` |
+| **报告结构** | 8 个模块（基本面/技术面/催化剂/估值/风险/仓位/内部人信号/ESG） |
+| **输出** | BUY/SELL/HOLD 评级 + 目标价 + 置信度 + 仓位建议 |
+| **数据源** | 实时市场数据、SEC Filing、分析师覆盖、期权流 |
+| **特色** | 零配置（安装即用，无需 API Key）；Goldman Sachs 风格报告 |
+| **安全边界** | ⚠️ 教育用途，不构成投资建议 |
+
+### 59. Stock Deep Research Agent — 8阶段尽职调查
+
+| 维度 | 详情 |
+|------|------|
+| **GitHub** | [liangdabiao/Claude-Code-Stock-Deep-Research-Agent](https://github.com/liangdabiao/Claude-Code-Stock-Deep-Research-Agent)（MIT, ⭐291） |
+| **安装** | `git clone` → 复制 `.claude/` 到项目目录 |
+| **调用方式** | `/stock-research AAPL` 或 `/stock-research 600519`（贵州茅台） |
+| **流程** | 8阶段：商业基础 → 行业分析 → 业务拆分 → 财务质量 → 治理 → 市场情绪 → 估值护城河 → 综合报告 |
+| **子代理数** | ~28 个并行研究代理 |
+| **输出** | 完整尽调报告（20+文件），含 DCF/反向DCF/相对估值/情景分析 |
+| **耗时** | 2-4小时（标准尽调） |
+| **特色** | 多空平衡、数据交叉验证、来源A-E评级；支持 A/港/美股 |
+| **安全边界** | ⚠️ 不提供投资建议，信号评级仅供基本面参考 |
+
+### 60. ConsensusAI — 12位投资大师共识决策
+
+| 维度 | 详情 |
+|------|------|
+| **GitHub** | [ancs21/ai-sub-invest](https://github.com/ancs21/ai-sub-invest) |
+| **安装** | `git clone` → `uv sync`（需 Python 3.11+） |
+| **调用方式** | 对话式：`"Analyze AAPL like Warren Buffett"` 或 `"Run all analysts on TSLA"`；SDK：`uv run python src/sdk_main.py AAPL,MSFT,NVDA 2025-12-06 --cash 50000` |
+| **12位分析师** | 巴菲特（价值）、芒格（心智模型）、格雷厄姆（深度价值）、林奇（GARP）、费雪（15点清单）、Burry（逆向）、Pabrai（Dhandho）、Ackman（激进）、Wood（颠覆创新）、Druckenmiller（宏观）、Jhunjhunwala（新兴市场）、Damodaran（DCF估值） |
+| **9项分析技能** | 基本面、技术面、估值（DCF）、情绪、新闻情绪、增长分析、风险管理、投资组合管理、财务数据 |
+| **特色** | 所有分析师并行运行 → 信号聚合 → 共识买卖建议 + 置信度评分 |
+| **安全边界** | ⚠️ 仅供教育/研究 |
+
+### 61. claude-trading-skills — 50+交易技能包
+
+| 维度 | 详情 |
+|------|------|
+| **GitHub** | [tradermonty/claude-trading-skills](https://github.com/tradermonty/claude-trading-skills)（⭐533+） |
+| **文档** | [tradermonty.github.io/claude-trading-skills](https://tradermonty.github.io/claude-trading-skills/) |
+| **安装** | 复制 `.skill` 文件到 `.claude/skills/` |
+| **核心 Skills（精选）** |  |
+| | `market-breadth-analyzer` — 市场宽度分析 |
+| | `uptrend-analyzer` — 上升趋势确认 |
+| | `exposure-coach` — 仓位暴露建议 |
+| | `portfolio-manager` — 投资组合管理 |
+| | `value-dividend-screener` — 价值股息筛选 |
+| | `vcp-screener` — VCP形态筛选（Volatility Contraction Pattern） |
+| | `canslim-screener` — CANSLIM选股法（William O'Neil体系） |
+| | `breakout-trade-planner` — 突破交易计划 |
+| | `position-sizer` — 仓位大小计算 |
+| | `technical-analyst` — 周线技术分析（道氏/波浪/蜡烛图/支撑阻力/动量） |
+| | `trader-memory-core` — 交易记忆（经验积累） |
+| | `signal-postmortem` — 交易信号复盘 |
+| | `backtest-expert` — 回测专家 |
+| | `edge-pipeline-orchestrator` — 策略优势管道编排 |
+| | `parabolic-short-trade-planner` — 抛物线做空计划 |
+| | `earnings-trade-analyzer` — 财报交易分析 |
+| | `options-strategy-advisor` — 期权策略顾问 |
+| **API需求** | 部分需 FMP / FINVIZ Elite / Alpaca；部分仅需免费数据源（GitHub CSV / yfinance） |
+| **特色** | **最全面的交易 Skills 集合**；涵盖选股→技术分析→仓位→风控→复盘全流程 |
+| **安全边界** | ⚠️ 仅供教育/研究用途 |
+
+### 62. Autonomous Trading Skill — 全自动定时交易
+
+| 维度 | 详情 |
+|------|------|
+| **来源** | [claude-plugins.dev](https://claude-plugins.dev/skills/@AkhilGurrapu/kubera/autonomous-trading)（@AkhilGurrapu） |
+| **安装** | 插件市场安装 |
+| **执行时间表** | 盘前筛选(9:00) → 开盘交易(9:30) → 午盘检查(12:00) → 收盘总结(16:00) |
+| **工作流** | 自动选股(NASDAQ 100 多维度评分) → 多模型分析 → 自动执行 → Telegram 通知 |
+| **券商** | Alpaca Paper Trading（模拟交易） |
+| **特色** | 完全无人值守；Cron 定时调度；Telegram 实时通知 |
+| **安全边界** | ⚠️ 默认纸交易，可切实盘（谨慎） |
+
+### 63. Quantitative Trading System (QTS) — 量化交易插件套件
+
+| 维度 | 详情 |
+|------|------|
+| **GitHub** | [jmanhype/claude-code-plugin-marketplace](https://github.com/jmanhype/claude-code-plugin-marketplace)（23个插件） |
+| **安装** | `/plugin marketplace add jmanhype/claude-code-plugin-marketplace` |
+| **交易相关插件** | `quant-trading-system`（策略/风控/执行/市场情报/研究管道）、`market-intelligence`（市场分析代理定义）、`tournament-runner`（策略锦标赛）、`swarm-coordination`（群体智能）、`consensus-protocols`（共识协议） |
+| **特色** | 纸交易 + CCXT 实盘；风控默认：1x杠杆上限/单标的25%上限/-5%日止损/-10%最大回撤；支持 ETH/SOL/XRP 等多币种 |
+| **安全边界** | ⚠️ 风控参数可配置，实盘需谨慎 |
+
+### 64. NautilusTrader Skill — 专业算法交易平台
+
+| 维度 | 详情 |
+|------|------|
+| **来源** | [claude-plugins.dev](https://claude-plugins.dev/skills/@Patrick-code-Bot/nautilus_AItrader/nautilustrader) |
+| **安装** | 插件市场安装 |
+| **核心能力** | 策略构建/回测/实盘/数据处理；完整策略生命周期（订单/持仓/风控/时钟/定时器） |
+| **底层** | [NautilusTrader](https://github.com/nautechsystems/nautilus_trader)（高性能Rust+Python算法交易平台） |
+| **特色** | 机构级性能（Rust核心）；Python策略开发；多交易所支持 |
+| **安全边界** | ⚠️ 支持实盘，需自行评估风险 |
+
+### 65. Claude Code Trading Terminal — Solana链上交易终端
+
+| 维度 | 详情 |
+|------|------|
+| **GitHub** | [degentic-tools/claude-code-trading-terminal](https://github.com/degentic-tools/claude-code-trading-terminal) |
+| **安装** | `git clone` → 配置 `.claude/` |
+| **核心能力** | 多DEX聚合 (Jupiter/Raydium/Meteora)；限价单/止损/止盈/DCA；PumpFun Meme币工具（风险评估/趋势扫描/快速买入）；做市机器人（50/50再平衡） |
+| **数据** | WebSocket实时数据管道 |
+| **风控** | 3级仓位管理系统 |
+| **特色** | 专为 Solana 链上交易设计；Agent-Native 架构 |
+| **安全边界** | ⚠️ 链上交易，资金风险极高 |
+
+### 66. Anthropic 官方金融服务插件
+
+| 维度 | 详情 |
+|------|------|
+| **来源** | Anthropic 官方 |
+| **安装** | `claude plugin marketplace add anthropics/financial-services-plugins` |
+| **覆盖领域** | 投资银行、股票研究、私募股权、财富管理 |
+| **数据连接器** | FactSet, PitchBook, S&P Global, Morningstar, Daloopa, Moody's 等 11 家 |
+| **特色** | **唯一官方支持的金融服务插件**；企业级数据合规；SOC 2 Type 2 |
+| **适用场景** | 专业金融机构，需要合规数据源的企业用户 |
+
+### 67. AI Neural Trader — 神经网络预测交易
+
+| 维度 | 详情 |
+|------|------|
+| **来源** | [CyberBedouinMonk Gist](https://gist.github.com/CyberBedouinMonk/bc9f1bd95f72c3e66a624b97bab32e0a) |
+| **核心模型** | NHITS + NBEATSx 神经预测（+25%准确率提升，<10ms推理） |
+| **加速** | CUDA GPU（6250倍加速） |
+| **MCP工具** | 41个专业 MCP 工具 |
+| **集成** | Polymarket 预测市场交易 + SPARC 17 种专业模式 |
+| **特色** | 首个将神经预测 + MCP + Claude Code 深度集成的系统 |
+| **安全边界** | ⚠️ 实验性项目 |
+
+### 68. SuperClaude v3 — 增强型配置框架
+
+| 维度 | 详情 |
+|------|------|
+| **GitHub** | [MCPVOT/SuperClaude](https://github.com/MCPVOT/SuperClaude) |
+| **安装** | `git clone` → 配置 |
+| **斜杠命令** | 16个（`/sc:implement`, `/sc:build`, `/sc:design`, `/sc:analyze` 等） |
+| **特色** | 智能 Persona 系统（架构师/前端/后端/安全等）；生产级交易系统集成 |
+| **适用场景** | 需要统一 Claude Code 配置管理的团队 |
+
+---
+
+### Skills 组合推荐
+
+| 投资风格 | 推荐 Skills 组合 | 安装时间 |
+|----------|-----------------|---------|
+| **A股价值投资** | Stock Deep Research (#59) + claude-trading-skills (#61) + TradingAgents (#57) | 15分钟 |
+| **美股基本面** | claude-equity-research (#58) + ConsensusAI (#60) + Financial Services (#66) | 10分钟 |
+| **加密货币短线** | Trading Terminal (#65) + QTS (#63) + AI Neural Trader (#67) | 20分钟 |
+| **量化策略开发** | NautilusTrader (#64) + Autonomous Trading (#62) + QTS (#63) | 25分钟 |
+| **全自动无人值守** | Autonomous Trading (#62) + QTS (#63) + TradingAgents (#57) | 20分钟 |
+
+---
+
 ## 快速集成建议
 
-### 分层部署架构
+### 分层部署架构（MCP + Skills 融合）
 
 ```
-┌──────────────────────────────────────────────┐
-│  AI 层        │ Claude Desktop + MCP 协议      │
-│  (自然语言)   │ "分析茅台的技术面和基本面"       │
-├──────────────────────────────────────────────┤
-│  MCP 网关     │ Stock MCP + FinanceMCP         │
-│  (数据聚合)   │ + Alpaca MCP (下单)             │
-├──────────────────────────────────────────────┤
-│  策略层       │ Qlib (因子挖掘)                 │
-│  (回测&执行)  │ + Backtrader/vn.py (回测&实盘)   │
-│               │ + VectorBT (快速参数扫描)        │
-├──────────────────────────────────────────────┤
-│  数据层       │ AKShare (中国主力)               │
-│  (行情&基本面)│ + yfinance (美股)               │
-│               │ + Tushare (补充)                │
-├──────────────────────────────────────────────┤
-│  风控层       │ vn.py Risk Manager              │
-│  (交易流控)   │ + 自建风险仪表盘                 │
-└──────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────┐
+│  Skills 层    │ /trade-analyze → 13 子代理并行分析     │
+│  (斜杠命令)   │ /stock-research → 28 代理深度尽调      │
+│               │ /trading-ideas → 8 模块机构研报        │
+│               │ /canslim-screener → CANSLIM 选股       │
+├──────────────────────────────────────────────────────┤
+│  MCP 网关     │ Stock MCP + FinanceMCP + Alpaca MCP   │
+│  (数据+交易)  │ → 56 个 MCP 工具提供行情/下单/风控     │
+├──────────────────────────────────────────────────────┤
+│  策略引擎     │ Qlib (AI因子挖掘) + Backtrader (回测)   │
+│  (回测&优化)  │ + VectorBT (高速参数扫描)              │
+├──────────────────────────────────────────────────────┤
+│  数据层       │ AKShare (中国) + yfinance (美股)        │
+│  (行情&基本面)│ + Tushare (补充) + CCXT (加密)          │
+├──────────────────────────────────────────────────────┤
+│  风控层       │ vn.py Risk Manager + QTS风控参数        │
+│  (交易流控)   │ + 自建风险仪表盘                        │
+└──────────────────────────────────────────────────────┘
 ```
 
-### 按市场的最强组合
+### 按市场的最强组合（Skills优先）
 
-| 市场 | MCP 网关 | 数据层 | 策略层 | 执行层 |
-|------|---------|--------|--------|--------|
-| **A股** | FinanceMCP (#11) | AKShare (#15) | Qlib (#34) | EasyTrader (#17) |
-| **期货** | Smart Financial (#7) | AKShare (#15) | vn.py (#21) | vn.py + CTP (#25) |
-| **美股** | Alpaca MCP (#5) | yfinance (#13) | VectorBT (#38) | Alpaca/IB MCP (#5/#10) |
-| **加密** | CryptoAnalysisMCP (#47) | CCXT | Freqtrade (#35) | QuantDinger (#36) |
+| 市场 | Skills（/命令） | MCP 网关 | 策略引擎 | 执行层 |
+|------|----------------|---------|--------|--------|
+| **A股** | /stock-research + /trade-analyze | FinanceMCP (#11) | Qlib (#34) | EasyTrader (#17) |
+| **美股** | /trading-ideas + ConsensusAI | Alpaca MCP (#5) | VectorBT (#38) | Alpaca/IB MCP (#5/#10) |
+| **期货** | /backtest + claude-trading-skills | Smart Financial (#7) | vn.py (#21) | vn.py + CTP (#25) |
+| **加密** | Trading Terminal + QTS | CryptoAnalysisMCP (#47) | Freqtrade (#35) | QuantDinger (#36) |
 
 ### 最小可用集（5分钟启动）
 
 ```bash
-# 1. 中国金融数据 MCP
-npx -y finance-mcp
+# === MCP 层（行情+交易） ===
+npx -y finance-mcp                  # 中国金融数据
+uvx alpha-vantage-mcp-server        # 全球市场数据
 
-# 2. 全球市场数据 MCP（免费）
-uvx alpha-vantage-mcp-server
+# === Skills 层（分析+决策） ===
+/plugin marketplace add quant-sentiment-ai/claude-equity-research
+git clone https://github.com/liangdabiao/Claude-Code-Stock-Deep-Research-Agent
+cp -r Claude-Code-Stock-Deep-Research-Agent/.claude/* .claude/
 
-# 3. AI 多智能体分析
-pip install finance-trading-ai-agents-mcp
-finance-trading-ai-agents-mcp
-
-# 4. 策略回测
-pip install backtesting.py
-
-# 5. 投资组合优化
-pip install PyPortfolioOpt
+# === 验证 ===
+/stock-research AAPL       # 深度尽调
+/trading-ideas NVDA         # 机构研报
 ```
 
-### 小团队推荐
+### 从零到AI交易员的推荐路线
 
-| 优先级 | 工具 | 投入 |
-|--------|------|------|
-| P0 | FinanceMCP + AKShare | 0元，30分钟配置 |
-| P1 | Qlib + Backtrader | 0元，1周学习 |
-| P2 | vn.py（如需期货实盘） | 0元，2周学习 |
-| P3 | QuantDinger（如需AI生成策略） | 0元，30分钟Docker部署 |
+| 阶段 | 工具 | 投入 | 目标 |
+|------|------|------|------|
+| **第1天** | Stock Deep Research (#59) + TradingAgents (#57) | 0元，30分钟 | 能用 `/` 命令生成个股深度报告 |
+| **第1周** | + FinanceMCP (#11) + AKShare (#15) | 0元，2小时配置 | 覆盖 A股/港股 实时数据 |
+| **第1月** | + claude-trading-skills (#61) + Backtrader (#23) | 0元，1周学习 | 掌握技术分析 + 回测能力 |
+| **第3月** | + Alpaca MCP (#5) + Qlib (#34) | Alpaca API Key | 美股 AI 模型 + 纸交易 |
+| **第6月** | + vn.py (#21) + CTP (#25) | 期货开户 | 期货实盘交易 |
 
 ---
 
